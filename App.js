@@ -3,65 +3,70 @@ import { NavigationContainer, PreventRemoveProvider } from '@react-navigation/na
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState } from 'react';
+import React from "react";
 
-function UserScreen({ navigation }) {
+function UserScreen(navigation){
+
   const [user, setUser] = useState('');
   const [rol, setRol] = useState('');
   const [pass, setPass] = useState('');
   
-
   const validate = () => {
-    if (user == " m") {
+    if (user == "Varelaa") {
       setUser("");
       setRol("")
       setPass("")
       navigation.navigate('Profile', { rol: rol }, { pass: pass })
     }
-  }
-  return (
+  };
+  
+  return(
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TextInput
         style={styles.inputs}
 	      placeholder="Usuario"
         onChangeText={value => setUser(value)}
         value={user}    
-    />
+        />
+      <View style={styles.container}>
+        <Text>Rol</Text>
+        <Picker
+          selectedValue={accounttype}
+          style={{ height: 50, width: 150 }}
+          onValueChange={(itemValue, itemIndex) => setRol(itemValue)}
+        >
+          <Picker.Item label="Seleccione su Rol" value="" />
+          <Picker.Item label="Administrador" value="radmin" />
+          <Picker.Item label="Usuario" value="ruser" />
+        </Picker>
 
-    <View style={styles.container}>
-      <Text>Rol</Text>
-      <Picker
-        selectedValue={accounttype}
-        style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setRol(itemValue)}
-      >
-        <Picker.Item label="Seleccione su Rol" value="" />
-        <Picker.Item label="Administrador" value="radmin" />
-        <Picker.Item label="Usuario" value="ruser" />
-      </Picker>
-
-      <TextInput
-        style={styles.inputs}
-	      placeholder="Contraseña"
-        onChangeText={value => setPass(value)}
-        value={pass}
-      />
-      <Button
-        title="Iniciar Sesión"
-        //onPress={() => navigation.navigate('Settings')}
-        //onPress={validate}
-        onPress={() => {
-          if (user == "Varelaa") {
-            setUser("");
-            setRol("")
-            setPass("")
-            navigation.navigate('Profile', { rol: rol} , { pass: pass }
-        }};
-      />
+        <TextInput
+          style={styles.inputs}
+          placeholder="Contraseña"
+          onChangeText={value => setPass(value)}
+          value={pass}
+        />
+        <Button style={styles.colorBtn}
+          title="Iniciar Sesión"
+          //onPress={() => navigation.navigate('Settings')}
+          //onPress={validate}
+          onPress={() => {
+              if (user == "Varelaa") {
+                setUser("");
+                setRol("");
+                setPass("")
+                navigation.navigate('Profile', { rol: rol} , { pass: pass })
+              }
+            }
+          }
+        />
+      </View>
     </View>
   );
 }
 
-function ProfileScreen({ route }) {
+
+function AccountScreen({ route }) {
   return (
     <View style={styles.container}>
       <Text>Cuenta: {route.params.user}</Text>
@@ -69,34 +74,97 @@ function ProfileScreen({ route }) {
   );
 }
 
+function Form () {
+  const [values, setValues] = React.useState({
+    Nrodecuenta: "",
+    identificacion: "",
+    titulardelacuenta: "",
+    fecha: "",
+    saldo: "",
+  });
+  function handleSubmit(evt) {
+    evt.preventDefault();
+    // Aquí puedes usar values para enviar la información
+  }
+  function handleChange(evt) {
+    const { target } = evt;
+    const { name, value } = target;
+    const newValues = {
+      ...values,
+      [name]: value,
+    };
+    setValues(newValues);
+  }
+  return (
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="nrodecuenta">Nro de cuenta</label>
+      <input
+        id="nrodecuenta"
+        name="nrodecuenta"
+        type="text"
+        value={values.nrodecuenta}
+        onChange={handleChange}
+      />
+      <label htmlFor="identificacion">Identificacion</label>
+      <input
+        id="identificacion"
+        name="identificacion"
+        type="numb"
+        value={values.identificacion}
+        onChange={handleChange}
+      />
+      <label htmlFor="titulardelacuenta">Titular de la cuenta</label>
+      <input
+        id="titulardelacuenta"
+        name="titulardelacuenta"
+        type="text"
+        value={values.titulardelacuenta}
+        onChange={handleChange}
+      />
+      <label htmlFor="fecha">Fecha</label>
+      <input
+        id="fecha"
+        name="fecha"
+        type="date"
+        value={values.fecha}
+        onChange={handleChange}
+      />
+      <label htmlFor="saldo">Saldo</label>
+      <input
+        id="saldo"
+        name="saldo"
+        type="num"
+        value={values.saldo}
+        onChange={handleChange}
+      />
 
-<Button title="Chequear"
-  onPress={()=>{
-    alert(`Topi cuenta: ${accounttype}, exenta`)
-  }}/>
-    </View>
+
+      <button style={styles.colorBtn} type="submit">Enviar</button>
+    </form>
   );
 }
+
 
 function SettingsScreen() {
   return (
     <View style={styles.container}>
-      <Text>Configuración</Text>
+      <Text>Cuentas</Text>
       <Button
         title="Cuenta"
         onPress={() => navigation.navigate('Feed')}
       />
     </View>
   );
-}
+} 
 
-function LoginScreen() {
+function MovScreen() {
   return (
     <View style={styles.container}>
-      <Text>Configuración</Text>
+      <Text>Movimientos</Text>
     </View>
   );
 }
+
 
 const Tab = createBottomTabNavigator();
 
@@ -112,7 +180,7 @@ function HomeTabs() {
         tabBarStyle: { display: "none" }
       }} />
       <Tab.Screen name="Cuenta" component={AccountScreen} />
-      <Tab.Screen name="Moviemientos" component={MovimientoScreen} />
+      <Tab.Screen name="Moviemientos" component={MovScreen} />
 
     </Tab.Navigator>
   );
@@ -125,7 +193,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeTabs} options={{ title: 'Sistema Bancario' }} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="cuentas" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -146,6 +214,32 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     marginBottom: 5
+  },
+  formulario: {
+    fontSize: 18,
+    marginTop: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    fontWeight: '600',
+    paddingLeft: 20,
+    borderWidth: 1,
+    borderRadius: 7,
+    paddingRight: 12,
+  }, 
+  colorBtn: {
+    borderWidth: 1,
+    borderColor: '#007BFF',
+    backgroundColor: '#007BFF',
+    padding: 15,
+    marginLeft: 20,
+    marginRight: 20,
+    borderRadius: 7,
+  },
+  errorText: {
+    fontSize: 14,
+    color: 'red',
+    marginBottom: 20,
+    marginLeft: 20
   }
 });
 
